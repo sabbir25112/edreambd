@@ -8,7 +8,7 @@
                     <div class="card-header container-fluid">
                         <div class="row">
                             <div class="col-md-8">
-                                <h3>Join in Classroom</h3>
+                                <h3>Add Student To {{ $classroom->name }}</h3>
                             </div>
                         </div>
                     </div>
@@ -19,16 +19,16 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('classroom.join.request') }}">
+                        <form method="POST" action="{{ route('classroom.store.student', $classroom->id) }}">
                             @csrf
 
                             <div class="form-group row">
-                                <label for="class_code" class="col-md-4 col-form-label text-md-right">Class Code (Required)</label>
+                                <label for="email" class="col-md-4 col-form-label text-md-right">Student Email (Required)</label>
 
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control @error('class_code') is-invalid @enderror" name="class_code" value="{{ old('class_code') }}" required autocomplete="class_code" autofocus>
+                                    <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
-                                    @error('class_code')
+                                    @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -39,7 +39,7 @@
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <button type="submit" class="btn btn-primary">
-                                        Send Join Request
+                                        Add Student
                                     </button>
                                 </div>
                             </div>

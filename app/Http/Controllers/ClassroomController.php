@@ -2,6 +2,7 @@
 
 use App\Classroom;
 use App\JoinRequest;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -11,14 +12,24 @@ class ClassroomController extends Controller
 {
     public function index()
     {
-        $classrooms = Classroom::where('teacher_id', auth()->user()->id)->paginate(config('app.DEFAULT_PAGINATION'));
+        $classrooms = Classroom::where('teacher_id', auth()->user()->id)
+            ->withCount('student')
+            ->paginate(config('app.DEFAULT_PAGINATION'));
         return view('classroom.index', compact('classrooms'));
     }
 
     public function show($classroom_id)
     {
         $classroom = Classroom::find($classroom_id);
-        return $classroom;
+        $students = Classroom::whereHas('student', function ($query) {
+            return $query->where('student_id', auth()->user()->id);
+        })->count();
+        if ($students == 0 && $classroom->teacher_id != auth()->user()->id) {
+            Session::flash('status', 'You are not allowed for this classroom');
+            return redirect()->back();
+        }
+        $classroom->addAttendance();
+
         return view('classroom.show', compact('classroom'));
     }
 
@@ -41,6 +52,34 @@ class ClassroomController extends Controller
         ]);
 
         return redirect()->route('classroom.index');
+    }
+
+    public function edit($classroom_id)
+    {
+        $classroom = Classroom::where('teacher_id', auth()->user()->id)->where('id', $classroom_id)->first();
+        if (is_null($classroom)) {
+            Session::flash('status', 'You are not authorized to update this classroom');
+            return redirect()->back();
+        }
+        return view('classroom.edit', compact('classroom'));
+    }
+
+    public function update(Request $request, $classroom_id)
+    {
+        $classroom = Classroom::where('teacher_id', auth()->user()->id)->where('id', $classroom_id)->first();
+        if (is_null($classroom)) {
+            Session::flash('status', 'You are not authorized to update this classroom');
+            return redirect()->back();
+        }
+        $classroom->update([
+            'name'      => $request->name,
+            'subject'   => $request->subject,
+            'section'   => $request->section,
+            'room'      => $request->room
+        ]);
+
+        Session::flash('status', 'Classroom Updated Successfully');
+        return redirect()->back();
     }
 
     public function join()
@@ -72,7 +111,45 @@ class ClassroomController extends Controller
             'classroom_id' => $classroom->id
         ]);
 
-        Session::flush('status', 'You Classroom Join Request is Pending for Approval');
+        Session::flash('status', 'You Classroom Join Request is Pending for Approval');
         return redirect()->route('classroom.index');
+    }
+
+    public function addStudent($classroom_id)
+    {
+        $classroom = Classroom::where('teacher_id', auth()->user()->id)->where('id', $classroom_id)->first();
+        if (is_null($classroom)) {
+            Session::flash('status', 'You are not authorized to update this classroom');
+            return redirect()->back();
+        }
+        return view('classroom.add-student', compact('classroom'));
+    }
+
+    public function storeStudent(Request $request, $classroom_id)
+    {
+        $classroom = Classroom::where('teacher_id', auth()->user()->id)->where('id', $classroom_id)->first();
+        if (is_null($classroom)) {
+            Session::flash('status', 'You are not authorized to update this classroom');
+            return redirect()->back()->withInput();
+        }
+        if (auth()->user()->email == $request->email) {
+            Session::flash('status', 'You can\'t add your email');
+            return redirect()->back()->withInput();
+        }
+        $this->validate($request, [
+            'email' => 'required|exists:users,email'
+        ]);
+        $student = User::where('email', $request->email)->first();
+        $classroom->student()->sync($student->id);
+        Session::flash('status', 'Student Added Successfully');
+        return redirect()->route('classroom.index');
+    }
+
+    public function asStudent()
+    {
+        $classrooms = Classroom::whereHas('student', function ($query) {
+            return $query->where('student_id', auth()->user()->id);
+        })->paginate(config('app.DEFAULT_PAGINATION'));
+        return view('classroom.index', compact('classrooms'));
     }
 }
