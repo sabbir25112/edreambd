@@ -27,7 +27,13 @@ class ResourceController extends Controller
 
 
         $file = request()->file('file');
-        $location = $file->store('uploads', ['disk' => 'public']);
+        if ($file) {
+            $location = $file->store('uploads', ['disk' => 'public']);
+        } else {
+            $location = null;
+        }
+
+
         $data = [
             'name'          => $request->name,
             'description'   => $request->description,

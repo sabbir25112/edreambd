@@ -22,6 +22,7 @@ class CreateResourcesTable extends Migration
             $table->enum('type', ['BOOK', 'URL', 'ZOOM_LINK', 'OTHERS'])->default('OTHERS');
             $table->string('name')->nullable();
             $table->text('location')->nullable();
+            $table->text('url')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

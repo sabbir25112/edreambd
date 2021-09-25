@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    E-Dream-BD
+                    Education Tangent
                 </div>
             </div>
         </div>
