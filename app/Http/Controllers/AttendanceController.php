@@ -11,7 +11,8 @@ class AttendanceController extends Controller
     {
         $date = request()->get('date') ? Carbon::create(request()->get('date')) : Carbon::today();
         $attendance = Attendance::where('date', $date)->pluck('student_id')->toArray();
-        $students = Classroom::find($classroom_id)->student;
-        return view('attendance.index', compact('classroom_id', 'attendance', 'students', 'date'));
+        $classroom = Classroom::find($classroom_id);
+        $students = $classroom->student;
+        return view('attendance.index', compact('classroom_id', 'attendance', 'students', 'date', 'classroom'));
     }
 }

@@ -43,4 +43,18 @@ class Classroom extends Model
             }
         }
     }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function isStudent()
+    {
+        $students = Classroom::whereHas('student', function ($query) {
+            return $query->where('student_id', auth()->id());
+        })->where('id', $this->id)->count();
+
+        return $students > 0;
+    }
 }

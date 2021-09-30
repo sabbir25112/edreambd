@@ -42,5 +42,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('classroom-resource/{classroom_id}/add', 'ResourceController@add')->name('classroom.resource.add');
     Route::post('classroom-resource/{classroom_id}', 'ResourceController@store')->name('classroom.resource.store');
 
+    Route::get('class-exam/{classroom_id}', 'ExamController@index')->name('classroom.exam');
+    Route::get('class-exam/{classroom_id}/create', 'ExamController@create')->name('classroom.exam.create');
+    Route::post('class-exam/{classroom_id}', 'ExamController@store')->name('classroom.exam.store');
+    Route::get('class-exam/{exam}/edit', 'ExamController@edit')->name('classroom.exam.edit');
+    Route::post('class-exam/{exam}/update', 'ExamController@update')->name('classroom.exam.update');
+    Route::get('class-exam/{exam}/questions', 'QuestionController@index')->name('classroom.exam.question');
+    Route::get('class-exam/{exam}/questions/create', 'QuestionController@create')->name('classroom.exam.question.create');
+    Route::post('class-exam/{exam}/questions', 'QuestionController@store')->name('classroom.exam.question.store');
+    Route::get('class-exam/{exam}/questions/{question}/edit', 'QuestionController@edit')->name('classroom.exam.question.edit');
+    Route::post('class-exam/{exam}/questions/{question}', 'QuestionController@update')->name('classroom.exam.question.update');
+    Route::get('class-exam/{exam}/enter', 'ExamController@enter')->name('classroom.exam.enter');
+    Route::get('class-exam/{exam}/finish', 'ExamController@finish')->name('classroom.exam.finish');
+    Route::get('class-exam/{exam}/answer-submit', 'ExamController@answerSubmit')->name('classroom.exam.answer.submit');
+    Route::get('class-exam/{exam}/result', 'ExamController@result')->name('classroom.exam.result');
+    Route::get('class-exam/{exam}/result/{student}', 'ExamController@resultIndividual')->name('classroom.exam.result.individual');
+
     Route::get('classroom-attendance/{classroom_id}', 'AttendanceController@index')->name('classroom.attendance');
 });

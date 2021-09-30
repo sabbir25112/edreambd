@@ -8,7 +8,7 @@
                     <div class="card-header container-fluid">
                         <div class="row">
                             <div class="col-md-10">
-                                <h3>Resources of {{ $classroom->name }}</h3>
+                                <h3>Resources of <a style="text-decoration: none;" href="{{ route('classroom.show', $classroom->id) }}">{{ $classroom->name }}</a></h3>
                             </div>
                             @if ($classroom->isTeacher())
                                 <div class="col-md-2">

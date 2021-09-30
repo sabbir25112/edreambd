@@ -3,13 +3,13 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header container-fluid">
                         <form action="{{ route('classroom.attendance', $classroom_id) }}">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h3>Attendance</h3>
+                                    <h3>Attendance of <a style="text-decoration: none;" href="{{ route('classroom.show', $classroom->id) }}">{{ $classroom->name }}</a></h3>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="date" name="date" value="{{ request()->get('date') }}" class="form-control">
